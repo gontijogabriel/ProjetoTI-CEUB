@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda de Boletos</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="menu">
+        <a href="">Home</a>
+        <a href="{{ url_for('boletos_pagos') }}">Boletos Pagos</a>
+        <a href="">Adicionar Boleto</a>
+        <a href="">Configurações</a>
+    </div>
+    <div class="content">
+        <h1>Novo Boleto</h1>
+        
+        <form action="/cadastrar" method="post">
+            <div class="form__item">
+                <label for="">Nome:</label>
+                <input type="text" name="nome" placeholder=" Identificação Boleto">
+            </div>
+
+            <div class="form__item">
+                <label for="">Valor:</label>
+                <input type="real" name="valor" placeholder=" 0.0">
+            </div>
+
+            <div class="form__item">
+                <label for="">Alerta:</label>
+                <input type="datetime-local" name="alerta" >
+            </div>
+
+            <div class="form__item">
+                <label for="">Vencimento:</label>
+                <input type="date" name="vencimento">
+            </div>
+
+            <div class="form__item">
+                <a href="{{ url_for('index') }}" class="tabela__link b">Voltar</a>
+                <input class="tabela__link g" type="submit" value="Salvar">
+            </div>
+
+        </form>
+
+    </div>
+</body>
+</html>

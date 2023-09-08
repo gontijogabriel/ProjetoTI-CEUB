@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda de Boletos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="menu">
+        <a href="index.html">Home</a>
+        <a href="boletos_pagos.html">Boletos Pagos</a>
+        <a href="adicionar_boleto.html">Adicionar Boleto</a>
+        <a href="configuracoes.html">Configurações</a>
+    </div>
+    <div class="content">
+        <h1>Configurações</h1>
+        <form action="">
+
+            <div class="form__item">
+                <label for="">Email:</label>
+                <input class="text" placeholder="exemplo@exm.com">
+                <a href="" class="tabela__link g">Salvar</a>
+            </div>
+        
+        </form>
+        <div style="padding: 10px 0;">
+            <a href="{{ url_for('index')}}" class="tabela__link b">Voltar</a>
+        </div>
+    </div>
+</body>
+</html>

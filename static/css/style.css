@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Croissant+One&family=Rubik:wght@700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+}
+/* Estilos para o menu lateral */
+.menu {
+    width: 200px;
+    padding: 20px;
+    background-color: #333;
+    color: white;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+.menu a {
+    padding: 15px;
+    text-decoration: none;
+    color: white;
+    display: block;
+    font-family: 'Croissant One', cursive;
+    font-family: 'Rubik', sans-serif;
+}
+
+.menu a:hover {
+    background-color: #555;
+}
+
+/* Estilos para o conteúdo à direita do menu */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+}
+
+.content p {
+    padding: 10px;
+}
+
+/* Estilos para a tabela */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.tabela__link{
+    padding: 5px;
+    color: #ffff;
+    text-decoration: none;
+    font-size: 15px;
+    border-radius: 5px;
+    font-family: 'Croissant One', cursive;
+    font-family: 'Rubik', sans-serif;
+}
+
+.r {
+    background-color: rgb(253, 0, 0);
+}
+
+.b {
+    background-color: rgb(0, 0, 236);
+}
+
+.g {
+    background-color: rgb(0, 138, 0);
+}
+
+input {
+    text-decoration: none;
+    
+}
