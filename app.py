@@ -3,7 +3,8 @@ from flask import Flask, render_template, request, redirect
 import sqlite3
 import datetime
 from data import get_db_connection, Boletos, Config
-
+from helpers import notificacao_email
+import schedule
 
 app = Flask(__name__)
 
@@ -117,62 +118,46 @@ def editar_boleto(id):
 
     return render_template('editar.html', boleto=boleto)
 
-# Rota para configurar notificações
-@app.route('/configurar', methods=['GET', 'POST'])
-def configurar_notificacoes():
+# Rota - Novo email
+@app.route('/configuracoes', methods=['GET', 'POST'])
+def configuracoes():
 
     conn = get_db_connection()
-    email = conn.query(Config).first()
-    conn.close
-
-    if email:
-
-        conn = get_db_connection()
-        email = conn.query(Config).first()
-        placeholder_mail = email.email
-        conn.commit()
-        conn.close()
-
-        if request.method == 'POST':
-            conn = get_db_connection()
-            email_form = request.form['email']
-
-            mail = conn.query(Config).filter(Config.email).first()
-            mail.email = email_form
-
-            conn.commit()
-            conn.close()
-
-            return render_template('/')
-    
-
-
-    else:
-        print('nao ha email no banco')
-        email = input('Email para notificacao: ')
-        new_e = Config(email=email)
-
-        conn = get_db_connection()
-        email = conn.add(new_e)
-        placeholder_mail = new_e.email
-        conn.commit()
-        conn.close()
-
-        return render_template('/configuracoes.html', email=placeholder_mail)
-
-
-
-# Configurando a rota padrão para limpar o banco de dados
-@app.route('/limpar', methods=['POST'])
-def limpar_banco_dados():
-    conn = get_db_connection()
-    conn.execute('DELETE FROM boletos')
-    conn.commit()
+    str_email = conn.query(Config).first().email
     conn.close()
+
+    if request.method == 'POST':
+        email = request.form['email']
+
+        conn = get_db_connection()
+        att_email = conn.query(Config).first()
+        att_email.email = email
+        conn.commit()
+        conn.close()
+
+        return redirect('/')
+
+
+    return render_template('configuracoes.html', email=str_email)
+           
+
+def manda_alertas():
+    conn = get_db_connection()
     
-    return redirect('/')
+
+
+
+# Agenda a execução da função a cada 5 segundos
+schedule.every(0.1).seconds.do(manda_alertas)
 
 
 # Inicializando o aplicativo Flask
 if __name__ == '__main__':
+
+    import threading
+    tarefa_thread = threading.Thread(target=manda_alertas)
+    tarefa_thread.daemon = True
+    tarefa_thread.start()
+
+
     app.run(debug=True)

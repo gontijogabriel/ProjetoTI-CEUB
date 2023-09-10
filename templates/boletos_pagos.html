@@ -1,18 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda de Boletos</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <div class="menu">
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="boletos_pagos.html">Boletos Pagos</a>
-        <a href="adicionar_boleto.html">Adicionar Boleto</a>
-        <a href="configuracoes.html">Configurações</a>
-    </div>
+{% extends "base/_head.html" %}
+
+{% block content %}
     <div class="content">
         <h1>Boletos Pagos</h1>
         <table>
@@ -30,8 +18,8 @@
                 <tr>
                     <td>{{ boleto.nome }}</td>
                     <td>{{ boleto.vencimento }}</td>
-                    <td>{{ boleto.alerta}}</td>
-                    <td>{{ boleto.valor}}</td>
+                    <td>{{ boleto.alerta }}</td>
+                    <td>{{ boleto.valor }}</td>
                     <td>
                         <a class="tabela__link r" href="/excluir/{{ boleto.id }}">Excluir</a>
                     </td>
@@ -45,3 +33,5 @@
     </div>
 </body>
 </html>
+
+{% endblock %}
