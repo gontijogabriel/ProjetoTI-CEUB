@@ -11,7 +11,7 @@ Base = declarative_base()
 # Definindo a classe do modelo
 class Boletos(Base):
     __tablename__ = 'boletos'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     nome = Column(String)
     valor = Column(Numeric(10, 2))  # Usando tipo Numeric para valores monetários
     vencimento = Column(String)
