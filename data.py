@@ -1,6 +1,5 @@
-from sqlalchemy import Column, Integer, String, Numeric
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, DECIMAL, Date, Boolean
+from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine  # Importe a função create_engine
 import mysql.connector
 
@@ -24,17 +23,16 @@ try:
     class Boletos(Base):
         __tablename__ = 'boletos'
         id = Column(Integer, primary_key=True, autoincrement=True)
-        nome = Column(String(255))  # Especifique o comprimento máximo desejado
-        valor = Column(Numeric(10, 2))  # Usando tipo Numeric para valores monetários
-        vencimento = Column(String(10))  # Especifique o comprimento máximo desejado, por exemplo, 10 caracteres
-        alerta = Column(String(255))  # Especifique o comprimento máximo desejado, por exemplo, 255 caracteres
-        situacao_pagamento = Column(String(255))
-
-
+        nome = Column(String(255), nullable=False)
+        valor = Column(DECIMAL(10,2), nullable=False)
+        vencimento = Column(Date, nullable=False)
+        notificacao_3 = Column(Boolean, default=False)
+        notificacao_venc = Column(Boolean, default=False)
+        situacao_pagamento = Column(Date)
 
     class Config(Base):
         __tablename__ = 'email'
-        email = Column(String(255), primary_key=True)  # Definindo a coluna como chave primária
+        email = Column(String(255), primary_key=True) 
 
     # Crie as tabelas no banco de dados
     engine = create_engine('mysql+mysqlconnector://root:root@localhost:3306/alugacar')
