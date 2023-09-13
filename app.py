@@ -1,11 +1,9 @@
 # Importando as bibliotecas necessárias
 from flask import Flask, render_template, request, redirect, flash
 from apscheduler.schedulers.background import BackgroundScheduler
-import sqlite3
 import datetime
 from data import get_db_connection, Boletos, Config
 from helpers import notificacao_email
-import schedule
 
 app = Flask(__name__)
 
