@@ -18,8 +18,16 @@ promovendo uma melhor saúde financeira.
 - SQLAlchemy
 
 ## Como Executar
+### Passo 1
 - clonar o repositorio `git clone <link-repositorio>`
 - criar .venv `python -m venv .venv`
 - ativar .venv `.venv\Scripts\activate`
 - instalar bibliotecas `pip install -r requirements.txt`
 - executar aplicação `python app.py`
+
+### Passo 2 - Banco de Dados
+- criar uma base de dados no mysql com o nome: `agenda_de_boletos`
+- abrir arquivo `data.py` e configurar os dados de conexão
+
+### Passo 3
+- executar `python app.py` na no terminal da .venv e abrir o link do servidor
