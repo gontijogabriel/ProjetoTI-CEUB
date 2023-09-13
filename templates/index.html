@@ -8,21 +8,20 @@
             <thead>
                 <tr>
                     <th>Nome</th>
-                    <th>Vencimento</th>
-                    <th>Alerta</th>
                     <th>Valor</th>
+                    <th>Vencimento</th>
                     <th>Ações</th>
                 </tr>
             </thead>
+
             <tbody>
-                {% for boleto in boletos %}
                 <h2>Boletos Cadastrados</h2>
                 <p>Total de Boletos para Pagar: {{ valorTotal }} </p>
+                {% for boleto in boletos %}
                 <tr>
                     <td>{{ boleto.nome }}</td>
-                    <td>{{ boleto.vencimento }}</td>
-                    <td>{{ boleto.alerta}}</td>
                     <td>{{ boleto.valor}}</td>
+                    <td>{{ boleto.vencimento }}</td>
                     <td>
                         <a class="tabela__link b" href="/editar/{{ boleto.id}}">Editar</a>
                         <a class="tabela__link g" href="/pagar/{{ boleto.id }}">Pagar</a>
@@ -32,6 +31,7 @@
                 {% endfor %}
             </tbody>
         </table>
+
     </div>
 </body>
 </html>

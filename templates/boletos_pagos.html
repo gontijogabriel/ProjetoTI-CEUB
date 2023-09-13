@@ -2,14 +2,15 @@
 
 {% block content %}
     <div class="content">
+        {% if boletos %}
         <h1>Boletos Pagos</h1>
         <table>
             <thead>
                 <tr>
                     <th>Nome</th>
+                    <th>Valor</th>
                     <th>Vencimento</th>
                     <th>Data de Pagamento</th>
-                    <th>Valor</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -17,9 +18,9 @@
                 {% for boleto in boletos %}
                 <tr>
                     <td>{{ boleto.nome }}</td>
-                    <td>{{ boleto.vencimento }}</td>
-                    <td>{{ boleto.alerta }}</td>
                     <td>{{ boleto.valor }}</td>
+                    <td>{{ boleto.vencimento }}</td>
+                    <td>{{ boleto.situacao_pagamento }}</td>
                     <td>
                         <a class="tabela__link r" href="/excluir/{{ boleto.id }}">Excluir</a>
                     </td>
@@ -27,6 +28,9 @@
                 {% endfor %}
             </tbody>
         </table>
+        {% else %}
+            <h1>Não há boletos pagos</h1>
+        {% endif %}
         <div style="padding: 10px 0;">
             <a href="{{ url_for('index') }}" class="tabela__link g">Voltar</a>
         </div>
