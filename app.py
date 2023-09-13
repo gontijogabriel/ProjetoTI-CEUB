@@ -17,6 +17,9 @@ def index():
 
     boletos_view = []
     soma = []
+
+
+
     for b in boletos:
         if b.situacao_pagamento == 'ausente':
             boletos_view.append(b)
@@ -30,9 +33,8 @@ def index():
 def cadastrar_boleto():
     if request.method == 'POST':
         nome = request.form['nome']
-        vencimento = request.form['vencimento']
-        alerta = request.form['alerta']
         valor = request.form['valor']
+        vencimento = request.form['vencimento']
 
         conn = get_db_connection()
         novo_boleto = Boletos(nome=nome, vencimento=vencimento, alerta=alerta, valor=valor,
