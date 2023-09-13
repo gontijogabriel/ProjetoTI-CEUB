@@ -117,9 +117,6 @@ def editar_boleto(id):
     return render_template('editar.html', boleto=boleto)
 
 
-
-
-
 @app.route('/add_email', methods=['GET', 'POST'])
 def add_email():
     email = None  # Defina email como None fora do bloco if
@@ -141,8 +138,6 @@ def add_email():
             return redirect('/configuracoes')
     
     return render_template('configuracoes.html', email=email)
-
-
 
 
 @app.route('/configuracoes', methods=['GET', 'POST'])
@@ -177,15 +172,14 @@ def configuracoes():
     return render_template('configuracoes.html', config=num_registros)
 
 
-
-
-
+# Funcao para mandar notificacoes
 def verifica_banco():
     print('lendo banco ... ')
     pass
     # raspa o banco se data de atual = data de vencimento
         # manda notificacao para email BOLETO VENCE HOJE
     
+
 
 
 # Inicializando o aplicativo Flask
