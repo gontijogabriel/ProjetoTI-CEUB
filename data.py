@@ -10,11 +10,12 @@ try:
         port=3306,
         user="root",
         password="root",
-        database="alugacar"
+        database="agenda_de_boletos"
     )
 
     if conn.is_connected():
         print("Conexão ao banco de dados estabelecida com sucesso!")
+
 
     # Cria a classe base declarativa
     Base = declarative_base()
@@ -26,6 +27,7 @@ try:
         nome = Column(String(255), nullable=False)
         valor = Column(DECIMAL(10,2), nullable=False)
         vencimento = Column(Date, nullable=False)
+        alerta_email = Column(Date, nullable=False)
         notificacao_3 = Column(Boolean, default=False)
         notificacao_venc = Column(Boolean, default=False)
         situacao_pagamento = Column(Date)
@@ -35,11 +37,12 @@ try:
         email = Column(String(255), primary_key=True) 
 
     # Crie as tabelas no banco de dados
-    engine = create_engine('mysql+mysqlconnector://root:root@localhost:3306/alugacar')
+    engine = create_engine('mysql+mysqlconnector://root:root@localhost:3306/agenda_de_boletos')
     Base.metadata.create_all(engine)
 
 except mysql.connector.Error as e:
     print(f"Erro ao conectar ao banco de dados: {e}")
+
 
 def get_db_connection():
     Session = sessionmaker(bind=engine)  # Use o engine criado anteriormente

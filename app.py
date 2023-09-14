@@ -1,10 +1,9 @@
 # Importando as bibliotecas necessárias
-from flask import Flask, render_template, request, redirect
-import sqlite3
+from flask import Flask, render_template, request, redirect, flash
+from apscheduler.schedulers.background import BackgroundScheduler
 import datetime
 from data import get_db_connection, Boletos, Config
 from helpers import notificacao_email
-import schedule
 
 app = Flask(__name__)
 
@@ -18,10 +17,8 @@ def index():
     boletos_view = []
     soma = []
 
-
-
     for b in boletos:
-        if b.situacao_pagamento == 'ausente':
+        if b.situacao_pagamento == None:
             boletos_view.append(b)
             soma.append(b.valor)
 
@@ -35,10 +32,10 @@ def cadastrar_boleto():
         nome = request.form['nome']
         valor = request.form['valor']
         vencimento = request.form['vencimento']
+        alerta_email = request.form['alerta_email']
 
         conn = get_db_connection()
-        novo_boleto = Boletos(nome=nome, vencimento=vencimento, alerta=alerta, valor=valor,
-                            situacao_pagamento='ausente')
+        novo_boleto = Boletos(nome=nome, valor=valor, vencimento=vencimento, alerta_email=alerta_email)
         conn.add(novo_boleto)
         conn.commit()
         conn.close()
@@ -51,10 +48,7 @@ def cadastrar_boleto():
 # Rota 3 - pagar boleto
 @app.route('/pagar/<int:id>', methods=['GET', 'POST'])
 def pagar_boleto(id):
-    data = datetime.datetime.now()
-    # Formato desejado, você pode personalizá-lo
-    formato = "%d/%m/%Y - %H:%M:%S"
-    data_pagamento = data.strftime(formato)
+    data_pagamento = datetime.datetime.now()
 
     conn = get_db_connection()
     boleto = conn.query(Boletos).get(id)
@@ -75,7 +69,7 @@ def boletos_pagos():
 
     boletos_pgs = []
     for b in boletos:
-        if b.situacao_pagamento != 'ausente':
+        if b.situacao_pagamento != None:
             boletos_pgs.append(b)
 
     return render_template('boletos_pagos.html', boletos=boletos_pgs)
@@ -103,16 +97,16 @@ def editar_boleto(id):
 
     if request.method == 'POST':
         nome = request.form['nome']
-        vencimento = request.form['vencimento']
-        alerta = request.form['alerta']
         valor = request.form['valor']
-        
+        vencimento = request.form['vencimento']
+        alerta_email = request.form['alerta_email']
+
         conn = get_db_connection()
         boleto = conn.query(Boletos).filter(Boletos.id == id).first()
         boleto.nome = nome
-        boleto.vencimento = vencimento
-        boleto.alerta = alerta
         boleto.valor = valor
+        boleto.vencimento = vencimento
+        boleto.alerta_email = alerta_email
         conn.commit()
         conn.close()
 
@@ -120,46 +114,73 @@ def editar_boleto(id):
 
     return render_template('editar.html', boleto=boleto)
 
-# Rota - Novo email
-@app.route('/configuracoes', methods=['GET', 'POST'])
-def configuracoes():
 
-    conn = get_db_connection()
-    str_email = conn.query(Config).first().email
-    conn.close()
-
-    if request.method == 'POST':
+@app.route('/add_email', methods=['GET', 'POST'])
+def add_email():
+    
+    if request.method == 'POST' and request.form['email'] != None:
         email = request.form['email']
-
         conn = get_db_connection()
-        att_email = conn.query(Config).first()
-        att_email.email = email
+        new_email = conn.query(Config).first()
+        new_email.email = email
         conn.commit()
         conn.close()
+        print('Configuração de e-mail atualizada com sucesso')
+        return redirect('/configuracoes')
+    
+    else:
+        print('Campo Email vazio!')
+    
+    return render_template('add_email.html')
 
-        return redirect('/')
 
-
-    return render_template('configuracoes.html', email=str_email)
-           
-
-def manda_alertas():
+@app.route('/configuracoes', methods=['GET', 'POST'])
+def configuracoes():
     conn = get_db_connection()
+    num_registros  = conn.query(Config).count() 
+    conn.close()
+
+    if num_registros == 0:
+        print('E-mail não cadastrado ainda')    
+        
+        return redirect('/add_email')
+    
+    else:
     
 
+        if request.method == 'POST':
+            email = request.form['email']
+
+            if not email:
+                print('O campo de e-mail não pode estar vazio!')
+            else:
+                conn = get_db_connection()
+                new_email = conn.query(Config).first()
+                new_email.email = email
+                conn.commit()
+                conn.close()
+                print('Configuração de e-mail atualizada com sucesso')
+
+                return redirect('/')
+
+        return render_template('configuracoes.html')
 
 
-# Agenda a execução da função a cada 5 segundos
-schedule.every(0.1).seconds.do(manda_alertas)
+# Funcao para mandar notificacoes
+def verifica_banco():
+    print('lendo banco ... ')
+    pass
+    # raspa o banco se data de atual = data de vencimento
+        # manda notificacao para email BOLETO VENCE HOJE
+    
+
 
 
 # Inicializando o aplicativo Flask
 if __name__ == '__main__':
 
-    import threading
-    tarefa_thread = threading.Thread(target=manda_alertas)
-    tarefa_thread.daemon = True
-    tarefa_thread.start()
-
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(verifica_banco, 'interval', seconds=60)  # Executar a verificação todos os dias
+    scheduler.start()
 
     app.run(debug=True)
