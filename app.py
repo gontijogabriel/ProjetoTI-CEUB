@@ -114,30 +114,36 @@ def editar_boleto(id):
 
     return render_template('editar.html', boleto=boleto)
 
-
 @app.route('/add_email', methods=['GET', 'POST'])
 def add_email():
-    
-    if request.method == 'POST' and request.form['email'] != None:
+
+    if request.method == 'POST':
         email = request.form['email']
-        conn = get_db_connection()
-        new_email = conn.query(Config).first()
-        new_email.email = email
-        conn.commit()
-        conn.close()
-        print('Configuração de e-mail atualizada com sucesso')
-        return redirect('/configuracoes')
-    
-    else:
-        print('Campo Email vazio!')
-    
-    return render_template('add_email.html')
+
+        if not email:
+            print('O campo de e-mail não pode estar vazio!')
+        else:
+            new_email  = Config(email=email)
+            conn = get_db_connection()
+            conn.add(new_email)
+            conn.commit()
+            conn.close()
+            print('Configuração de e-mail atualizada com sucesso')
+
+            return redirect('/')
+
+    return render_template('configuracoes.html')
+
+
+
+
+
 
 
 @app.route('/configuracoes', methods=['GET', 'POST'])
 def configuracoes():
     conn = get_db_connection()
-    num_registros  = conn.query(Config).count() 
+    num_registros  = conn.query(Config).count()
     conn.close()
 
     if num_registros == 0:
@@ -145,25 +151,24 @@ def configuracoes():
         
         return redirect('/add_email')
     
-    else:
     
 
-        if request.method == 'POST':
-            email = request.form['email']
+    if request.method == 'POST':
+        email = request.form['email']
 
-            if not email:
-                print('O campo de e-mail não pode estar vazio!')
-            else:
-                conn = get_db_connection()
-                new_email = conn.query(Config).first()
-                new_email.email = email
-                conn.commit()
-                conn.close()
-                print('Configuração de e-mail atualizada com sucesso')
+        if not email:
+            print('O campo de e-mail não pode estar vazio!')
+        else:
+            conn = get_db_connection()
+            new_email = conn.query(Config).first()
+            new_email.email = email
+            conn.commit()
+            conn.close()
+            print('Configuração de e-mail atualizada com sucesso')
 
-                return redirect('/')
+            return redirect('/')
 
-        return render_template('configuracoes.html')
+    return render_template('configuracoes.html')
 
 
 # Funcao para mandar notificacoes
