@@ -185,7 +185,7 @@ def verifica_banco():
 if __name__ == '__main__':
 
     scheduler = BackgroundScheduler()
-    scheduler.add_job(verifica_banco, 'interval', seconds=60)  # Executar a verificação todos os dias
+    scheduler.add_job(verifica_banco, 'interval', seconds=60)  # Executar a verificação 
     scheduler.start()
 
     app.run(debug=True)
