@@ -3,7 +3,7 @@
 {% block content %}
     <div class="content">
         <h1>Agenda de Boletos</h1>
-        
+        {% if boletos %}
         <table> 
             <thead>
                 <tr>
@@ -31,7 +31,9 @@
                 {% endfor %}
             </tbody>
         </table>
-
+        {% else %}
+            <p>Não há boletos Cadastrados!</p>
+        {% endif %}
     </div>
 </body>
 </html>

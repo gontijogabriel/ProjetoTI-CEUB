@@ -21,7 +21,7 @@ class Boletos(Base):
     alerta_email = Column(Date, nullable=False)
     notificacao_3 = Column(Boolean, default=False)
     notificacao_venc = Column(Boolean, default=False)
-    situacao_pagamento = Column(Date)
+    sit_pagamento = Column(Boolean, default=False)
 
 class Config(Base):
     __tablename__ = 'email'

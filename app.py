@@ -4,12 +4,18 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import datetime
 from data import get_db_connection, Boletos, Config
 from helpers import notificacao_email
+from datetime import datetime
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def index():
+    conn = get_db_connection()
+    email = conn.query(Config).first()
+    if email == None:
+        return render_template('add_email.html')
+    
+
     conn = get_db_connection()
     boletos = conn.query(Boletos).all()
     conn.close()
@@ -18,21 +24,22 @@ def index():
     soma = []
 
     for b in boletos:
-        if b.situacao_pagamento == None:
+        if b.sit_pagamento == False:
             boletos_view.append(b)
             soma.append(b.valor)
 
     return render_template('index.html', boletos=boletos_view, valorTotal=sum(soma))
-
-
 # Rota 2 - cadastrar um novo boleto
 @app.route('/cadastrar', methods=['GET', 'POST'])
 def cadastrar_boleto():
     if request.method == 'POST':
         nome = request.form['nome']
         valor = request.form['valor']
-        vencimento = request.form['vencimento']
-        alerta_email = request.form['alerta_email']
+        venc = request.form['vencimento']
+        aler = request.form['alerta_email']
+
+        vencimento = datetime.strptime(venc, '%Y-%m-%d').date()
+        alerta_email = datetime.strptime(aler, '%Y-%m-%d').date()
 
         conn = get_db_connection()
         novo_boleto = Boletos(nome=nome, valor=valor, vencimento=vencimento, alerta_email=alerta_email)
@@ -43,23 +50,16 @@ def cadastrar_boleto():
         return redirect('/')
 
     return render_template('adicionar_boleto.html')
-
-
 # Rota 3 - pagar boleto
 @app.route('/pagar/<int:id>', methods=['GET', 'POST'])
 def pagar_boleto(id):
-    data_pagamento = datetime.datetime.now()
-
     conn = get_db_connection()
     boleto = conn.query(Boletos).get(id)
-    boleto.situacao_pagamento = data_pagamento
+    boleto.sit_pagamento = True
     conn.commit()
-
     conn.close()
 
     return redirect('/')
-
-
 # Rota para Boletos pagos
 @app.route('/boletos_pagos')
 def boletos_pagos():
@@ -69,12 +69,10 @@ def boletos_pagos():
 
     boletos_pgs = []
     for b in boletos:
-        if b.situacao_pagamento != None:
+        if b.sit_pagamento == True:
             boletos_pgs.append(b)
 
     return render_template('boletos_pagos.html', boletos=boletos_pgs)
-
-
 # Rota para excluir um boleto existente
 @app.route('/excluir/<int:id>', methods=['GET', 'POST'])
 def excluir_boleto(id):
@@ -86,8 +84,6 @@ def excluir_boleto(id):
     conn.close()
 
     return redirect('/')
-
-
 # Rota para editar um boleto existente
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar_boleto(id):
@@ -98,13 +94,17 @@ def editar_boleto(id):
     if request.method == 'POST':
         nome = request.form['nome']
         valor = request.form['valor']
-        vencimento = request.form['vencimento']
-        alerta_email = request.form['alerta_email']
+        venc = request.form['vencimento']
+        aler = request.form['alerta_email']
 
         conn = get_db_connection()
         boleto = conn.query(Boletos).filter(Boletos.id == id).first()
         boleto.nome = nome
         boleto.valor = valor
+
+        vencimento = datetime.strptime(venc, '%Y-%m-%d').date()
+        alerta_email = datetime.strptime(aler, '%Y-%m-%d').date()
+
         boleto.vencimento = vencimento
         boleto.alerta_email = alerta_email
         conn.commit()
@@ -113,45 +113,30 @@ def editar_boleto(id):
         return redirect('/')
 
     return render_template('editar.html', boleto=boleto)
-
+# Rota para adcionar o email (deve ser a primeira tela executada)
 @app.route('/add_email', methods=['GET', 'POST'])
 def add_email():
-
     if request.method == 'POST':
         email = request.form['email']
+        conn = get_db_connection()
+        email = Config(email=email)
+        conn.add(email)
+        conn.commit()
+        conn.close()
 
-        if not email:
-            print('O campo de e-mail não pode estar vazio!')
-        else:
-            new_email  = Config(email=email)
-            conn = get_db_connection()
-            conn.add(new_email)
-            conn.commit()
-            conn.close()
-            print('Configuração de e-mail atualizada com sucesso')
+        return redirect('/')
 
-            return redirect('/')
-
-    return render_template('configuracoes.html')
-
-
-
-
-
-
-
+    return render_template('index.html')
 @app.route('/configuracoes', methods=['GET', 'POST'])
 def configuracoes():
     conn = get_db_connection()
-    num_registros  = conn.query(Config).count()
-    conn.close()
+    email = conn.query(Config).first()
+    if email == None:
+        return render_template('add_email.html')
 
-    if num_registros == 0:
-        print('E-mail não cadastrado ainda')    
-        
-        return redirect('/add_email')
-    
-    
+    conn = get_db_connection()
+    email = conn.query(Config).first()
+    conn.close
 
     if request.method == 'POST':
         email = request.form['email']
@@ -168,9 +153,7 @@ def configuracoes():
 
             return redirect('/')
 
-    return render_template('configuracoes.html')
-
-
+    return render_template('configuracoes.html', email_atual=email.email)
 # Funcao para mandar notificacoes
 def verifica_banco():
     print('lendo banco ... ')
@@ -178,8 +161,6 @@ def verifica_banco():
     # raspa o banco se data de atual = data de vencimento
         # manda notificacao para email BOLETO VENCE HOJE
     
-
-
 
 # Inicializando o aplicativo Flask
 if __name__ == '__main__':
