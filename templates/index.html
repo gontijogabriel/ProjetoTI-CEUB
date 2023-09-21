@@ -33,6 +33,7 @@
         </table>
         {% else %}
             <p>Não há boletos Cadastrados!</p>
+            <a class="tabela__link g" href="{{ url_for('cadastrar_boleto') }}">Adicionar Boleto</a>
         {% endif %}
     </div>
 </body>
