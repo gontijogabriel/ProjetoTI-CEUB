@@ -1,87 +1,181 @@
-@import url('https://fonts.googleapis.com/css2?family=Croissant+One&family=Rubik:wght@700&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
+/* Estilos gerais */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #dddad3ec;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0px;
 }
-/* Estilos para o menu lateral */
-.menu {
-    width: 200px;
+
+/* Estilos para a div .agenda */
+.agenda {
+    width: 800px;
+    height: 600px;
+    background-color: #a2a595d7;
+    border-radius: 10px;
     padding: 20px;
-    background-color: #333;
-    color: white;
-    position: fixed;
-    height: 100%;
-    overflow: auto;
+    box-shadow: 0px 5px 15px rgba(75, 75, 75, 0.5);
 }
 
-.menu a {
-    padding: 15px;
+/* Estilos para a lista de links .links */
+.links ul {
+    list-style: none;
+}
+ul li .actived{
+    background: none;
+    background: #f5f4f2ec;
+    padding-bottom: 17px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+
+}
+
+
+.links li {
+    display: inline-block;
+    margin-right: 0px 15px; /* Espaçamento entre os links (opcional) */
+    
+}
+
+li:visited {
+    display: inline-block;
+    margin-right: 0px 15px; /* Espaçamento entre os links (opcional) */
+    background: pink;
+}
+
+.links a {
     text-decoration: none;
-    color: white;
-    display: block;
-    font-family: 'Croissant One', cursive;
-    font-family: 'Rubik', sans-serif;
+    color: #000; /* Cor dos links */
+    padding: 13px; /* Espaçamento interno dos links (opcional) */
+    background-color: #ccc; /* Cor de fundo dos links (opcional) */
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
 }
 
-.menu a:hover {
-    background-color: #555;
+/* Estilize o link quando ele for hover (opcional) */
+.links a:hover {
+    background-color: #000;
+    color: #000000;
+    background-color: #F6EAD4;
 }
 
-/* Estilos para o conteúdo à direita do menu */
-.content {
-    margin-left: 250px;
-    padding: 20px;
+/* Estilos para a div .container */
+.container {
+    background-color: #f5f4f2ec;
+    border-radius: 10px;
+    height: 550px;
 }
 
-.content p {
-    padding: 10px;
-}
-
-/* Estilos para a tabela */
+/* Estilos para tabelas */
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
-table, th, td {
-    border: 1px solid #ddd;
-}
-
-th, td {
+th,
+td {
+    border: 1px solid #000000;
     padding: 8px;
     text-align: left;
 }
 
-th {
+thead {
+    background-color: #f5f4f2ec;
+}
+
+tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
-.tabela__link{
-    padding: 5px;
-    color: #ffff;
+th {
+    background-color: #f5f4f2ec;
+    color: rgb(0, 0, 0);
+}
+
+/* Estilos para links na tabela */
+a.tabela__link {
     text-decoration: none;
-    font-size: 15px;
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: 1px solid #f5f4f2ec;
     border-radius: 5px;
-    font-family: 'Croissant One', cursive;
-    font-family: 'Rubik', sans-serif;
-    pointer-events: auto;
+    font-weight: bold;
 }
 
-.r {
-    background-color: rgb(253, 0, 0);
+.tabela__link.b {
+    background-color: blue;
+    color: white;
 }
 
-.b {
-    background-color: rgb(0, 0, 236);
+.tabela__link.g {
+    background-color: green;
+    color: white;
 }
 
-.g {
-    background-color: rgb(0, 138, 0);
+.tabela__link.r {
+    background-color: red;
+    color: rgb(255, 255, 255);
 }
 
+/* Estilos para a div .container__form */
+.container__form {
+    text-align: center;
+    background-color: #f5f4f2ec;
+    border-radius: 10px;
+    height: 550px;
+}
 
-.form__item {
-    margin-top: 30px;
+/* Estilos para o título (h1) */
+.container__form h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Estilos para o formulário */
+.container__form form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Estilos para rótulos (labels) */
+.container__form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Estilos para inputs de texto e número */
+.container__form input[type="text"],
+.container__form input[type="date"],
+.container__form input[type="number"] {
+    width: 100%;
     padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+/* Estilos para o botão */
+.container__form .button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.container__form .button:hover {
+    background-color: #0056b3;
+}
+
+.titulo {
+    padding: 20px;
 }

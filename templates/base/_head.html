@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda de Boletos</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <title>Agenda</title>
 </head>
 <body>
-    <div class="menu">
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('boletos_pagos') }}">Boletos Pagos</a>
-        <a href="{{ url_for('cadastrar_boleto') }}">Adicionar Boleto</a>
-        <a href="{{ url_for('configuracoes') }}">Configurações</a>
-    </div>
+    <div class="agenda">
+        <div class="links">
+            <ul>
+                <li><a id="index"  href="{{ url_for('index') }}" >Agenda</a></li>
+                <li><a id="new" href="{{ url_for('cadastrar') }}">Novo Boleto</a></li>
+                <li><a id="pagos" href="{{ url_for('boletos_pagos') }}">Pagos</a></li>
+                <li><a id="configuracao" href="{{ url_for('configuracoes') }}">Configuração</a></li>
+            </ul>
+        </div>
 
     {% block content %}
     {% endblock %}
