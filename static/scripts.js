@@ -12,18 +12,18 @@ function addClassIfElementExists(elementId, className) {
 }
 
 // Verifica se o pathname corresponde a uma rota conhecida e adiciona a classe se o elemento existir
-if (pathname == "/index.html") {
+if (pathname == "/") {
     addClassIfElementExists("index", "actived");
 }
 
-if (pathname == "/boletos_pagos.html") {
+if (pathname == "/boletos_pagos") {
     addClassIfElementExists("pagos", "actived");
 }
 
-if (pathname == "/novo_boleto.html") {
+if (pathname == "/cadastrar") {
     addClassIfElementExists("new", "actived");
 }
 
-if (pathname == "/configuracao.html") {
+if (pathname == "/configuracoes") {
     addClassIfElementExists("configuracao", "actived");
 }

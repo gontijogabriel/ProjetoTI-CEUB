@@ -4,8 +4,9 @@
 
         <div class="container">
             <br>
-            <p>Total de Boletos Pagos: R$36.99</p>
+            <p>Total de Boletos Pagos: 77777</p>
             <table> 
+                {% for boleto in boletos %}
                 <thead>
                     <tr>
                         <th>Identificacao</th>
@@ -17,15 +18,16 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>nome</td>
-                        <td>vencimento</td>
-                        <td>alerta</td>
-                        <td>valor</td>
+                        <td>{{ boleto.nome }}</td>
+                        <td>{{ boleto.vencimento }}</td>
+                        <td>{{ boleto.alerta_email }}</td>
+                        <td>{{ boleto.valor}}</td>
                         <td>
                             <a class="tabela__link r" href="/excluir/{{ boleto.id }}">Excluir</a>
                         </td>
                     </tr>
                 </tbody>
+                {% endfor %}
             </table>
         </div>
 

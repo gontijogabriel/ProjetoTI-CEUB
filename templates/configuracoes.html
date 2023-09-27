@@ -2,18 +2,36 @@
 
 {% block content %}
 
-        <div class="container__form">
-            <h1 class="titulo">Configurações</h1>
-            <form action="" method="POST">
-                <p>Email Atual: aaaa</p>
-                <input type="text" id="identificacao" name="identificacao" placeholder="Insira um Email" required><br><br>
-                <input type="submit" class="button" value="Adicionar Boleto">
-            </form>
-        </div>
+    <div class="content">
+        <h1>Configurações</h1>
+        {% if email == False %}
+        <p>Você ainda nâo possui um e-mail cadastrado</p>
+        <form action="/configuracoes" method="POST">
 
+            <div class="form__item">
+                <label for="email">Cadastrar Email:</label>
+                <input class="text" name="email">
+                <input type="submit" value="Salvar" class="tabela__link g">
+            </div>
+        
+        </form>
+        {% else %}
+        <p>Email atual: {{ email }}</p>
+        <form action="/configuracoes" method="POST">
+
+            <div class="form__item">
+                <label for="email">Cadastrar Email:</label>
+                <input class="text" name="email">
+                <input type="submit" value="Salvar" class="tabela__link g">
+            </div>
+        
+        </form>
+        {% endif %}
+        <div style="padding: 10px 0;">
+            <a href="{{ url_for('index')}}" class="tabela__link b">Voltar</a>
+        </div>
     </div>
 </body>
-<script src="../static/scripts.js"></script>
 </html>
 
 {% endblock %}

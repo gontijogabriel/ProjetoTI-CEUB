@@ -13,7 +13,8 @@ def index():
     conn = get_db_connection()
     email = conn.query(Config).first()
     if email == None:
-        return render_template('add_email.html')
+        print('No email address')
+        return render_template('configuracoes.html', email=False)
     
 
     conn = get_db_connection()
@@ -73,6 +74,7 @@ def boletos_pagos():
             boletos_pgs.append(b)
 
     return render_template('boletos_pagos.html', boletos=boletos_pgs)
+
 # Rota para excluir um boleto existente
 @app.route('/excluir/<int:id>', methods=['GET', 'POST'])
 def excluir_boleto(id):
@@ -114,25 +116,17 @@ def editar_boleto(id):
 
     return render_template('editar.html', boleto=boleto)
 # Rota para adcionar o email (deve ser a primeira tela executada)
-@app.route('/add_email', methods=['GET', 'POST'])
-def add_email():
-    if request.method == 'POST':
-        email = request.form['email']
-        conn = get_db_connection()
-        email = Config(email=email)
-        conn.add(email)
-        conn.commit()
-        conn.close()
 
-        return redirect('/')
 
-    return render_template('index.html')
-@app.route('/configuracoes', methods=['GET', 'POST'])
+
+
+
+@app.route('/configuracoes', methods=['POST'])
 def configuracoes():
     conn = get_db_connection()
     email = conn.query(Config).first()
     if email == None:
-        return render_template('add_email.html')
+        return render_template('configuracoes.html', email=False)
 
     conn = get_db_connection()
     email = conn.query(Config).first()
@@ -140,7 +134,7 @@ def configuracoes():
 
     if request.method == 'POST':
         email = request.form['email']
-
+        print('email: ', email)
         if not email:
             print('O campo de e-mail não pode estar vazio!')
         else:
@@ -153,7 +147,7 @@ def configuracoes():
 
             return redirect('/')
 
-    return render_template('configuracoes.html', email_atual=email.email)
+    return render_template('configuracoes.html', email=email)
 # Funcao para mandar notificacoes
 def verifica_banco():
     print('lendo banco ... ')
