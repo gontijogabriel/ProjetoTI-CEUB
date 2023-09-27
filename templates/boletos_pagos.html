@@ -3,9 +3,8 @@
 {% block content %}
 
         <div class="container">
-            <br>
             {% if boletos %}
-            <p>Total de Boletos Pagos: {{ sumBoletosPgs }}</p>
+            <p class="titulo">Total de Boletos Pagos: {{ sum_boletos_pgs }}</p>
             <table> 
                 {% for boleto in boletos %}
                 <thead>

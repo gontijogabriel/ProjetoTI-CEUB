@@ -5,6 +5,7 @@ import datetime
 from data import get_db_connection, Boletos, Config
 from helpers import notificacao_email
 from datetime import datetime
+from sqlalchemy import func
 
 app = Flask(__name__)
 
@@ -68,12 +69,13 @@ def boletos_pagos():
     conn.close()
 
     boletos_pgs = []
-    sum_boletos_pgs = []
     for b in boletos:
         if b.sit_pagamento == True:
             boletos_pgs.append(b)
-            sum_boletos_pgs.append(sum(b.valor))
 
+    conn = get_db_connection()
+    sumBoletosPgs = conn.query(func.sum(Boletos.valor)).filter(Boletos.sit_pagamento == True).scalar()
+    conn.close()
 
     return render_template('boletos_pagos.html', boletos=boletos_pgs, sum_boletos_pgs=sumBoletosPgs)
 
@@ -143,7 +145,6 @@ def add_email():
 def configuracoes():
     conn = get_db_connection()
     new_email = conn.query(Config).first().email
-    print(new_email)
     conn.close
 
     if request.method == 'POST':
