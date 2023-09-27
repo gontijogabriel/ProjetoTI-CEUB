@@ -14,8 +14,7 @@ def index():
     email = conn.query(Config).first()
     if email == None:
         print('No email address')
-        return render_template('configuracoes.html', email=False)
-    
+        return render_template('add_email.html')
 
     conn = get_db_connection()
     boletos = conn.query(Boletos).all()
@@ -118,19 +117,28 @@ def editar_boleto(id):
 # Rota para adcionar o email (deve ser a primeira tela executada)
 
 
+@app.route('/add_email', methods=['POST'])
+def add_email():
 
+    if request.method == 'POST':
+        email = request.form['email']
+        print('email: ', email)
+        if not email:
+            print('O campo de e-mail não pode estar vazio!')
+        else:
+            conn = get_db_connection()
+            new_email = Config(email=email)
+            conn.add(new_email)
+            conn.commit()
+            conn.close()
+            print('Configuração de e-mail atualizada com sucesso')
+
+            return redirect('/')
+    
 
 
 @app.route('/configuracoes', methods=['POST'])
 def configuracoes():
-    conn = get_db_connection()
-    email = conn.query(Config).first()
-    if email == None:
-        return render_template('configuracoes.html', email=False)
-
-    conn = get_db_connection()
-    email = conn.query(Config).first()
-    conn.close
 
     if request.method == 'POST':
         email = request.form['email']
@@ -147,7 +155,10 @@ def configuracoes():
 
             return redirect('/')
 
-    return render_template('configuracoes.html', email=email)
+    return render_template('configuracoes.html')
+
+
+
 # Funcao para mandar notificacoes
 def verifica_banco():
     print('lendo banco ... ')
