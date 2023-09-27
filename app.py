@@ -68,11 +68,14 @@ def boletos_pagos():
     conn.close()
 
     boletos_pgs = []
+    sum_boletos_pgs = []
     for b in boletos:
         if b.sit_pagamento == True:
             boletos_pgs.append(b)
+            sum_boletos_pgs.append(sum(b.valor))
 
-    return render_template('boletos_pagos.html', boletos=boletos_pgs)
+
+    return render_template('boletos_pagos.html', boletos=boletos_pgs, sum_boletos_pgs=sumBoletosPgs)
 
 # Rota para excluir um boleto existente
 @app.route('/excluir/<int:id>', methods=['GET', 'POST'])
@@ -136,9 +139,12 @@ def add_email():
             return redirect('/')
     
 
-
-@app.route('/configuracoes', methods=['POST'])
+@app.route('/configuracoes', methods=['GET', 'POST'])
 def configuracoes():
+    conn = get_db_connection()
+    new_email = conn.query(Config).first().email
+    print(new_email)
+    conn.close
 
     if request.method == 'POST':
         email = request.form['email']
@@ -155,7 +161,7 @@ def configuracoes():
 
             return redirect('/')
 
-    return render_template('configuracoes.html')
+    return render_template('configuracoes.html', email=new_email)
 
 
 
@@ -175,3 +181,5 @@ if __name__ == '__main__':
     scheduler.start()
 
     app.run(debug=True)
+
+

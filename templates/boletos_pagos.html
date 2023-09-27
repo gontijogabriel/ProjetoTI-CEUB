@@ -4,7 +4,8 @@
 
         <div class="container">
             <br>
-            <p>Total de Boletos Pagos: 77777</p>
+            {% if boletos %}
+            <p>Total de Boletos Pagos: {{ sumBoletosPgs }}</p>
             <table> 
                 {% for boleto in boletos %}
                 <thead>
@@ -29,6 +30,9 @@
                 </tbody>
                 {% endfor %}
             </table>
+            {% else %}
+            <h1>Não existem boletos pagos!</h1>
+            {% endif %}
         </div>
 
     </div>

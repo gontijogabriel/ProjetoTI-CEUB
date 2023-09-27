@@ -2,6 +2,7 @@
 
 {% block content %}
         <div class="container">
+            {% if boletos %}
             <p class="titulo">Total de Boletos: {{ valorTotal }}</p>
             <table> 
                 <thead>
@@ -29,6 +30,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            {% endif %}
         </div>
     </div>
 </body>
