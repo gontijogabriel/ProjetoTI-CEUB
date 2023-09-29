@@ -179,3 +179,15 @@ a.tabela__link {
 .titulo {
     padding: 20px;
 }
+
+.h1-centro {
+    text-align: center; /* Alinhar o texto no centro horizontalmente */
+    display: flex; /* Usar flexbox para centralizar verticalmente */
+    justify-content: center; /* Centralizar verticalmente */
+    align-items: center; /* Centralizar verticalmente */
+}
+
+.configuracoes {
+    display: inline-block;
+
+}

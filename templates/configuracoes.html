@@ -3,21 +3,27 @@
 {% block content %}
 
     <div class="content">
-        <h1>Configurações</h1>
-        <p>Email atual: {{ email }}</p>
 
-        <form action="/configuracoes" method="POST">
+        <div class="container__form">
 
-            <div class="form__item">
-                <label for="email">Cadastrar Email:</label>
-                <input class="text" name="email">
-                <input type="submit" value="Salvar" class="tabela__link g">
+            <h1 class="titulo">Configurações</h1>
+            <p>Email atual: {{ email }}</p>
+    
+            <form action="/configuracoes" method="POST">
+    
+                <div class="form__item">
+                    <label for="email">Alterar Email:</label>
+                    <input class="text" name="email">
+                    <input type="submit" value="Salvar" class="tabela__link g">
+                </div>
+            
+            </form>
+            <div style="padding: 10px 0;">
+                <a href="{{ url_for('index')}}" class="tabela__link b">Voltar</a>
             </div>
-        
-        </form>
-        <div style="padding: 10px 0;">
-            <a href="{{ url_for('index')}}" class="tabela__link b">Voltar</a>
+
         </div>
+        
     </div>
 </body>
 </html>

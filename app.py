@@ -6,8 +6,10 @@ from data import get_db_connection, Boletos, Config
 from helpers import notificacao_email
 from datetime import datetime
 from sqlalchemy import func
+from errors import errors
 
 app = Flask(__name__)
+app.secret_key = 'qwerty'
 
 @app.route('/')
 def index():
@@ -30,9 +32,17 @@ def index():
             soma.append(b.valor)
 
     return render_template('index.html', boletos=boletos_view, valorTotal=sum(soma))
+
+
 # Rota 2 - cadastrar um novo boleto
 @app.route('/cadastrar', methods=['GET', 'POST'])
 def cadastrar_boleto():
+    conn = get_db_connection()
+    email = conn.query(Config).first()
+    if email == None:
+        print('No email address')
+        return render_template('add_email.html')
+
     if request.method == 'POST':
         nome = request.form['nome']
         valor = request.form['valor']
@@ -51,6 +61,8 @@ def cadastrar_boleto():
         return redirect('/')
 
     return render_template('adicionar_boleto.html')
+
+
 # Rota 3 - pagar boleto
 @app.route('/pagar/<int:id>', methods=['GET', 'POST'])
 def pagar_boleto(id):
@@ -61,9 +73,17 @@ def pagar_boleto(id):
     conn.close()
 
     return redirect('/')
+
+
 # Rota para Boletos pagos
 @app.route('/boletos_pagos')
 def boletos_pagos():
+    conn = get_db_connection()
+    email = conn.query(Config).first()
+    if email == None:
+        print('No email address')
+        return render_template('add_email.html')
+
     conn = get_db_connection()
     boletos = conn.query(Boletos).all()
     conn.close()
@@ -79,6 +99,7 @@ def boletos_pagos():
 
     return render_template('boletos_pagos.html', boletos=boletos_pgs, sum_boletos_pgs=sumBoletosPgs)
 
+
 # Rota para excluir um boleto existente
 @app.route('/excluir/<int:id>', methods=['GET', 'POST'])
 def excluir_boleto(id):
@@ -90,6 +111,8 @@ def excluir_boleto(id):
     conn.close()
 
     return redirect('/')
+
+
 # Rota para editar um boleto existente
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
 def editar_boleto(id):
@@ -119,10 +142,9 @@ def editar_boleto(id):
         return redirect('/')
 
     return render_template('editar.html', boleto=boleto)
+
 # Rota para adcionar o email (deve ser a primeira tela executada)
-
-
-@app.route('/add_email', methods=['POST'])
+@app.route('/add_email', methods=['GET', 'POST'])
 def add_email():
 
     if request.method == 'POST':
@@ -141,11 +163,17 @@ def add_email():
             return redirect('/')
     
 
+# Rota Configuracoes
 @app.route('/configuracoes', methods=['GET', 'POST'])
 def configuracoes():
-    conn = get_db_connection()
-    new_email = conn.query(Config).first().email
-    conn.close
+    try:
+        conn = get_db_connection()
+        new_email = conn.query(Config).first().email
+        conn.close
+    except:
+        return render_template('add_email.html')
+        
+
 
     if request.method == 'POST':
         email = request.form['email']
