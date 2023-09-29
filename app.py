@@ -4,12 +4,24 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import datetime
 from data import get_db_connection, Boletos, Config
 from helpers import notificacao_email
-from datetime import datetime
 from sqlalchemy import func
 from errors import errors
 
 app = Flask(__name__)
 app.secret_key = 'qwerty'
+
+
+def verifica_vencimento(vencimento):
+    
+    hoje = datetime.datetime.now().date()
+    
+    print(type(vencimento))
+    print(type(hoje))
+    
+    subtracao = vencimento - hoje
+    print(subtracao.days)
+
+
 
 @app.route('/')
 def index():
@@ -19,17 +31,27 @@ def index():
         print('No email address')
         return render_template('add_email.html')
 
+    
+    # Pega todos os emails cadastrados
     conn = get_db_connection()
     boletos = conn.query(Boletos).all()
     conn.close()
 
     boletos_view = []
+    boletos_venc_3 = []
     soma = []
 
     for b in boletos:
         if b.sit_pagamento == False:
             boletos_view.append(b)
             soma.append(b.valor)
+            if verifica_vencimento(b.vencimento):
+                pass
+
+            
+    # Pega os emails que vence nos proximos 3 dias
+    
+    
 
     return render_template('index.html', boletos=boletos_view, valorTotal=sum(soma))
 
@@ -48,6 +70,7 @@ def cadastrar_boleto():
         valor = request.form['valor']
         venc = request.form['vencimento']
         aler = request.form['alerta_email']
+        
 
         vencimento = datetime.strptime(venc, '%Y-%m-%d').date()
         alerta_email = datetime.strptime(aler, '%Y-%m-%d').date()

@@ -4,6 +4,40 @@
         <div class="container">
             {% if boletos %}
             <p class="titulo">Total de Boletos: {{ valorTotal }}</p>
+
+            {% if boletos_venc_3 %}
+            <table> 
+                <thead>
+                    <tr>
+                        <th>Identificacao</th>
+                        <th>Vencimento</th>
+                        <th>Alerta</th>
+                        <th>Valor</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for boleto in boletos_venc_3 %}
+                    <tr>            
+                        <td>{{ boleto.nome }}</td>
+                        <td>{{ boleto.vencimento }}</td>
+                        <td>{{ boleto.alerta_email }}</td>
+                        <td>{{ boleto.valor}}</td>                    
+                        <td>
+                            <a class="tabela__link b" href="/editar/{{ boleto.id}}">Editar</a>
+                            <a class="tabela__link g" href="/pagar/{{ boleto.id }}">Pagar</a>
+                            <a class="tabela__link r" href="/excluir/{{ boleto.id }}">Excluir</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="h1-centro">
+                <p>Não existem boletos vencendo nos proximos 3 dias!</p>
+            </div>
+            {% endif %}
+
             <table> 
                 <thead>
                     <tr>

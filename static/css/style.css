@@ -177,7 +177,8 @@ a.tabela__link {
 }
 
 .titulo {
-    padding: 20px;
+    padding: 10px;
+    margin: 0;
 }
 
 .h1-centro {
@@ -185,6 +186,9 @@ a.tabela__link {
     display: flex; /* Usar flexbox para centralizar verticalmente */
     justify-content: center; /* Centralizar verticalmente */
     align-items: center; /* Centralizar verticalmente */
+}
+.h1-centro, p{
+    margin: 5px 0;
 }
 
 .configuracoes {
