@@ -25,9 +25,5 @@ promovendo uma melhor saúde financeira.
 - instalar bibliotecas `pip install -r requirements.txt`
 - executar aplicação `python app.py`
 
-### Passo 2 - Banco de Dados
-- criar uma base de dados no mysql com o nome: `agenda_de_boletos`
-- abrir arquivo `data.py` e configurar os dados de conexão
-
-### Passo 3
+### Passo 2
 - executar `python app.py` na no terminal da .venv e abrir o link do servidor
