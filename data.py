@@ -18,6 +18,7 @@ class Boletos(Base):
     nome = Column(String(255), nullable=False)
     valor = Column(DECIMAL(10, 2), nullable=False)
     vencimento = Column(Date, nullable=False)
+    alerta = Column(String(255) nullable=False)
     alerta_email = Column(Date, nullable=False)
     notificacao_3 = Column(Boolean, default=False)
     notificacao_venc = Column(Boolean, default=False)

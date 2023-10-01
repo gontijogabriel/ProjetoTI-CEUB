@@ -1,27 +1,14 @@
 # Importando as bibliotecas necessárias
 from flask import Flask, render_template, request, redirect, flash
 from apscheduler.schedulers.background import BackgroundScheduler
-import datetime
+from datetime import datetime
 from data import get_db_connection, Boletos, Config
-from helpers import notificacao_email
-from sqlalchemy import func
+from helpers import notificacao_email, emoji_alerta
+from sqlalchemy import func, desc, asc
 from errors import errors
 
 app = Flask(__name__)
 app.secret_key = 'qwerty'
-
-
-def verifica_vencimento(vencimento):
-    
-    hoje = datetime.datetime.now().date()
-    
-    print(type(vencimento))
-    print(type(hoje))
-    
-    subtracao = vencimento - hoje
-    print(subtracao.days)
-
-
 
 @app.route('/')
 def index():
@@ -30,31 +17,21 @@ def index():
     if email == None:
         print('No email address')
         return render_template('add_email.html')
-
     
     # Pega todos os emails cadastrados
     conn = get_db_connection()
-    boletos = conn.query(Boletos).all()
+    boletos = conn.query(Boletos).order_by(asc(Boletos.vencimento)).all()
     conn.close()
 
     boletos_view = []
-    boletos_venc_3 = []
     soma = []
 
     for b in boletos:
         if b.sit_pagamento == False:
             boletos_view.append(b)
             soma.append(b.valor)
-            if verifica_vencimento(b.vencimento):
-                pass
-
-            
-    # Pega os emails que vence nos proximos 3 dias
     
-    
-
     return render_template('index.html', boletos=boletos_view, valorTotal=sum(soma))
-
 
 # Rota 2 - cadastrar um novo boleto
 @app.route('/cadastrar', methods=['GET', 'POST'])
@@ -75,8 +52,10 @@ def cadastrar_boleto():
         vencimento = datetime.strptime(venc, '%Y-%m-%d').date()
         alerta_email = datetime.strptime(aler, '%Y-%m-%d').date()
 
+        alerta = emoji_alerta(vencimento)
+
         conn = get_db_connection()
-        novo_boleto = Boletos(nome=nome, valor=valor, vencimento=vencimento, alerta_email=alerta_email)
+        novo_boleto = Boletos(nome=nome, valor=valor, vencimento=vencimento, alerta=alerta[1], alerta_email=alerta_email)
         conn.add(novo_boleto)
         conn.commit()
         conn.close()
@@ -96,7 +75,6 @@ def pagar_boleto(id):
     conn.close()
 
     return redirect('/')
-
 
 # Rota para Boletos pagos
 @app.route('/boletos_pagos')
@@ -122,7 +100,6 @@ def boletos_pagos():
 
     return render_template('boletos_pagos.html', boletos=boletos_pgs, sum_boletos_pgs=sumBoletosPgs)
 
-
 # Rota para excluir um boleto existente
 @app.route('/excluir/<int:id>', methods=['GET', 'POST'])
 def excluir_boleto(id):
@@ -134,7 +111,6 @@ def excluir_boleto(id):
     conn.close()
 
     return redirect('/')
-
 
 # Rota para editar um boleto existente
 @app.route('/editar/<int:id>', methods=['GET', 'POST'])
@@ -184,7 +160,6 @@ def add_email():
             print('Configuração de e-mail atualizada com sucesso')
 
             return redirect('/')
-    
 
 # Rota Configuracoes
 @app.route('/configuracoes', methods=['GET', 'POST'])
@@ -215,22 +190,57 @@ def configuracoes():
 
     return render_template('configuracoes.html', email=new_email)
 
-
-
 # Funcao para mandar notificacoes
 def verifica_banco():
     print('lendo banco ... ')
-    pass
-    # raspa o banco se data de atual = data de vencimento
-        # manda notificacao para email BOLETO VENCE HOJE
+    try:
+        conn = get_db_connection()
+        email_to = conn.query(Config).first().email
+        data = conn.query(Boletos)
+        conn.close()
+
+
+        for boleto in data:
+            venc = boleto.vencimento
+            
+            conn = get_db_connection()
+            registro = conn.query(Boletos).filter_by(id=boleto.id).first()
+        
+            emoji = emoji_alerta(venc)
+            registro.alerta = emoji[1]
+            conn.commit()
+            conn.close()
+
+            dias = emoji[0]
+
+            if dias <= 1:
+                # boleto vencido
+                notificacao_email(boleto, email_to, 'BOLETO VENCIDO')
+                
+            elif dias <= 2:
+                # notificacao 3 dias para o vencimento
+                notificacao_email(boleto, email_to, 'Fique atento, o boleto vence em 3 dias!')
+
+            else:
+                pass
+
+            
+
+    except Exception as e:
+        print('Erro ao atualizar banco de dados:', str(e))
+
+    
     
 
 # Inicializando o aplicativo Flask
 if __name__ == '__main__':
 
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(verifica_banco, 'interval', seconds=60)  # Executar a verificação 
-    scheduler.start()
+    try:   
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(verifica_banco, 'interval', seconds=20)
+        scheduler.start()
+    except:
+        pass
 
     app.run(debug=True)
 

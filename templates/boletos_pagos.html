@@ -6,7 +6,6 @@
             {% if boletos %}
             <p class="titulo">Total de Boletos Pagos: {{ sum_boletos_pgs }}</p>
             <table> 
-                {% for boleto in boletos %}
                 <thead>
                     <tr>
                         <th>Identificacao</th>
@@ -17,6 +16,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% for boleto in boletos %}
                     <tr>
                         <td>{{ boleto.nome }}</td>
                         <td>{{ boleto.vencimento }}</td>
@@ -26,8 +26,8 @@
                             <a class="tabela__link r" href="/excluir/{{ boleto.id }}">Excluir</a>
                         </td>
                     </tr>
+                    {% endfor %}
                 </tbody>
-                {% endfor %}
             </table>
             {% else %}
             <div class="h1-centro">

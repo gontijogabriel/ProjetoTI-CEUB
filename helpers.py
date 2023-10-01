@@ -1,29 +1,42 @@
 import smtplib
 import email.message
 from data import get_db_connection, Boletos, Config
+from datetime import datetime
 
 
-senha = 'tffsyhfjokqwqvil'
+def emoji_alerta(venc):
+    hoje = datetime.now().date()
 
-def notificacao_email(boleto):
+    dias = venc - hoje
+    dias = dias.days
 
-    # pega email do banco
-    conn = get_db_connection()
-    email_to = conn.query(Config).first().email
-    conn.close()
+    if dias <= 0:
+        return [dias,'❌']
 
+    elif dias >= 1 and dias <= 3:
+        return [dias,'🔴']
+    
+    elif dias >= 4 and dias <= 6:
+        return [dias,'🟡']
+    
+    else:
+        return [dias,'🟢']
+
+def notificacao_email(boleto, email_to, msg):
     corpo_email = """
     <h1>Alerta de Boletos</h1>
-    <p>O boleto {{ boleto.nome }} vai vencer em breve!!!</p>
+    <p>Referente ao boleto: <strong>{{ boleto.nome }}</stong></p>
+    <p><strong>{{ msg }}</strong></p>
     <p>Vencimento: {{ boleto.vencimento }}</p>
     <p>Valor: {{ boleto.valor }}</p>
+    <p>ass: Alerta de Boletos</p>
     """
 
     msg = email.message.Message()
     msg['Subject'] = "ALERTA"
     msg['From'] = 'alertadeboletos@gmail.com'
     msg['To'] = email_to
-    password = senha
+    password = 'tffsyhfjokqwqvil'
     msg.add_header('Content-Type', 'text/html')
     msg.set_payload(corpo_email )
 
@@ -32,4 +45,5 @@ def notificacao_email(boleto):
     # Login Credentials for sending the mail
     s.login(msg['From'], password)
     s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
-    print('Email enviado')
+    
+    return print('email enviado!')
