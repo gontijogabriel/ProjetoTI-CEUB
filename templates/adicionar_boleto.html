@@ -6,16 +6,37 @@
     <h1 class="titulo">Adicionar Boleto</h1>
     <form action="/cadastrar" method="POST">
         <label for="identificacao">Identificação:</label>
-        <input type="text" id="identificacao" name="nome" required><br><br>
+        <input type="text" id="identificacao" name="nome" required><br>
 
         <label for="vencimento">Vencimento:</label>
-        <input type="date" id="vencimento" name="vencimento" required><br><br>
+        <input type="date" id="vencimento" name="vencimento" required><br>
 
-        <label for="alerta">Alerta por Email:</label>
-        <input type="date" id="alerta" name="alerta_email" required><br><br>
+
+        <label for="alerta">Melhor horário para receber Email:</label>
+        <select class="select-option" id="alerta" name="alerta_email" required>
+            <option value="07:00">07:00 AM</option>
+            <option value="08:00">08:00 AM</option>
+            <option value="09:00">09:00 AM</option>
+            <option value="10:00">10:00 AM</option>
+            <option value="11:00">11:00 AM</option>
+            <option value="12:00">12:00 PM</option>
+            <option value="13:00">13:00 PM</option>
+            <option value="14:00">14:00 PM</option>
+            <option value="15:00">15:00 PM</option>
+            <option value="16:00">16:00 PM</option>
+            <option value="17:00">17:00 PM</option>
+            <option value="18:00">18:00 PM</option>
+            <option value="19:00">19:00 PM</option>
+            <option value="20:00">20:00 PM</option>
+            <option value="21:00">21:00 PM</option>
+            <option value="22:00">22:00 PM</option>
+        </select>
+        
+        <br>
+        <br>
 
         <label for="valor">Valor:</label>
-        <input type="number" id="valor" name="valor" step="0.01" required><br><br>
+        <input type="number" id="valor" name="valor" step="0.01" required>
 
         <input type="submit" class="button" value="Adicionar Boleto">
     </form>
