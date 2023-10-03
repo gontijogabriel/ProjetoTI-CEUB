@@ -13,6 +13,7 @@ ter um impacto positivo na vida das pessoas, ajudando a evitar dívidas acumulad
 promovendo uma melhor saúde financeira.
 
 ### Principais Bibliotecas
+- Python 3.10.11
 - Flask
 - SQLite
 - SQLAlchemy
@@ -21,23 +22,19 @@ promovendo uma melhor saúde financeira.
 ### Passo 1
 - necessário ter o arquivo .env
 - clonar o repositorio `git clone <link-repositorio>`
-- criar .venv `python -m venv .venv`
-- ativar .venv `.venv\Scripts\activate`
+- criar .venv `python -m venv .venv` (windows)
+- ativar .venv `.venv\Scripts\activate` (windows)
 - instalar bibliotecas `pip install -r requirements.txt`
 - executar aplicação `python app.py`
 
 ### Passo 2
 - executar `python run.py` na no terminal da .venv e abrir o link do servidor
 
-
-# A fazer:
-- erros
-    - criar funcionaliade para mostrar erros
-
-- ajustar endpoint 'editar'
-	- modificar os dados de notificacao
-	- obs: seria mais facil pegar os dados editados e adicionar como novo
-
-- ajustar css
-	- hover dos botoes / integracao com background
-
+### A fazer:
+- [x] fontend, html e css
+- [x] backend, rotas, crud 
+- [x] logica de notificacoes 
+- [ ] backend, criar arquivo errors.py
+- [ ] backend, criar funcionaliade para mostrar erros
+- [ ] backend, ajustar endpoint 'editar'
+- [ ] css, ajustar hover dos botoes e background da aplicacao
