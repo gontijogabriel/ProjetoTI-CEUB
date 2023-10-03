@@ -38,7 +38,6 @@ def index():
 def cadastrar_boleto():
     conn = get_db_connection()
     email = conn.query(Config).first()
-    conn.close()
     if email == None:
         print('No email address')
         return render_template('add_email.html')
@@ -47,17 +46,16 @@ def cadastrar_boleto():
         nome = request.form['nome']
         valor = request.form['valor']
         venc = request.form['vencimento']
-        alerta_h = request.form['alerta_email']
+        aler = request.form['alerta_email']
         
 
         vencimento = datetime.strptime(venc, '%Y-%m-%d').date()
-        alerta_hora = datetime.strptime(alerta_h, "%H:%M").time()
+        alerta_email = datetime.strptime(aler, '%Y-%m-%d').date()
 
-        alerta = emoji_alerta(vencimento)[1]
-        vence_em = emoji_alerta(vencimento)[0]
+        alerta = emoji_alerta(vencimento)
 
         conn = get_db_connection()
-        novo_boleto = Boletos(nome=nome, valor=valor, vencimento=vencimento, alerta=alerta, alerta_hora=alerta_hora, vence_em=vence_em)
+        novo_boleto = Boletos(nome=nome, valor=valor, vencimento=vencimento, alerta=alerta[1], alerta_email=alerta_email)
         conn.add(novo_boleto)
         conn.commit()
         conn.close()
@@ -133,10 +131,10 @@ def editar_boleto(id):
         boleto.valor = valor
 
         vencimento = datetime.strptime(venc, '%Y-%m-%d').date()
-        alerta_hora = datetime.strptime(aler, "%H:%M").time()
+        alerta_email = datetime.strptime(aler, '%Y-%m-%d').date()
 
         boleto.vencimento = vencimento
-        boleto.alerta_hora = alerta_hora
+        boleto.alerta_email = alerta_email
         conn.commit()
         conn.close()
 
@@ -192,89 +190,49 @@ def configuracoes():
 
     return render_template('configuracoes.html', email=new_email)
 
-####
 # Funcao para mandar notificacoes
 def verifica_banco():
     print('lendo banco ... ')
     try:
-        # Pega todos os boletos pendentes do banco
         conn = get_db_connection()
         email_to = conn.query(Config).first().email
-        data = conn.query(Boletos).filter_by(sit_pagamento=False).all()
+        data = conn.query(Boletos)
         conn.close()
 
-        for boleto in data:
-            ntf_3 = boleto.notif_3_dias
-            ntf_1 = boleto.notif_1_dia
-            ntf_v = boleto.notif_venc
 
-            # Atualiza dias para o boleto vencer
-            dias = emoji_alerta(boleto.vencimento)[0]
+        for boleto in data:
+            venc = boleto.vencimento
+            
             conn = get_db_connection()
-            b = conn.query(Boletos).filter_by(id=boleto.id).first()
-            b.vence_em = emoji_alerta(boleto.vencimento)[0]
+            registro = conn.query(Boletos).filter_by(id=boleto.id).first()
+        
+            emoji = emoji_alerta(venc)
+            registro.alerta = emoji[1]
             conn.commit()
             conn.close()
 
-            if dias <= 0 and ntf_v == False:
-                # email vencido
+            dias = emoji[0]
 
-                # atualiza
-                conn = get_db_connection()
-                b = conn.query(Boletos).filter_by(id=boleto.id).first()
-                b.notif_venc = True
-                conn.commit()
-                conn.close()
-
-                # manda email
-                now = datetime.now().time()
-                alert_time = datetime.strptime(b.alerta_hora, "%H:%M").time()
-                if now.hour == alert_time.hour:
-                    notificacao_email(boleto, email_to, 'BOLETO VENCIDO')
-
-            elif dias == 1 and ntf_1 == False:
-                # manda o email faltando 1 dia para vencer
-
-                # atualiza
-                conn = get_db_connection()
-                b = conn.query(Boletos).filter_by(id=boleto.id).first()
-                b.notif_1_dia = True
-                conn.commit()
-                conn.close()
-
-                # manda email
-                now = datetime.now().time()
-                alert_time = datetime.strptime(b.alerta_hora, "%H:%M").time()
-                if now.hour == alert_time.hour:
-                    notificacao_email(boleto, email_to, 'boleto vence amanha')
-
-            elif dias >= 1 and dias <= 3 and ntf_3 == False:
-                # manda o boleto faltando 3 dias para vencer
+            if dias <= 1:
+                # boleto vencido
+                notificacao_email(boleto, email_to, 'BOLETO VENCIDO')
                 
-                # atualiza
-                conn = get_db_connection()
-                b = conn.query(Boletos).filter_by(id=boleto.id).first()
-                b.notif_3_dias = True
-                conn.commit()
-                conn.close()
-
-                # manda email
-                now = datetime.now().time()
-                alert_time = datetime.strptime(b.alerta_hora, "%H:%M").time()
-                
-                if now.hour == alert_time.hour:
-                    notificacao_email(boleto, email_to, 'BOLETO VENCIDO')
+            elif dias <= 2:
+                # notificacao 3 dias para o vencimento
+                notificacao_email(boleto, email_to, 'Fique atento, o boleto vence em 3 dias!')
 
             else:
                 pass
+
+            
+
+    except Exception as e:
+        print('Erro ao atualizar banco de dados:', str(e))
+
     
-    except Exception as erro:
-        # Ação a ser realizada em caso de erro
-        print(f"Ocorreu um erro: {erro}")
+    
 
-
-
-# Inicializando o aplicativo
+# Inicializando o aplicativo Flask
 if __name__ == '__main__':
 
     try:   

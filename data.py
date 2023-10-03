@@ -1,4 +1,4 @@
-from sqlalchemy import Time, Column, Integer, String, DECIMAL, Date, Boolean
+from sqlalchemy import Column, Integer, String, DECIMAL, Date, Boolean
 from sqlalchemy.orm import sessionmaker, declarative_base
 from sqlalchemy import create_engine
 
@@ -15,21 +15,13 @@ Base = declarative_base()
 class Boletos(Base):
     __tablename__ = 'boletos'
     id = Column(Integer, primary_key=True, autoincrement=True)
-
     nome = Column(String(255), nullable=False)
-
     valor = Column(DECIMAL(10, 2), nullable=False)
     vencimento = Column(Date, nullable=False)
-
-    alerta = Column(String(255), nullable=False)
-    alerta_hora = Column(Time, nullable=False)
-
-    notif_3_dias = Column(Boolean, default=False)
-    notif_1_dia = Column(Boolean, default=False)
-    notif_venc = Column(Boolean, default=False)
-
-    vence_em = Column(Integer, nullable=False)
-
+    alerta = Column(String(255) nullable=False)
+    alerta_email = Column(Date, nullable=False)
+    notificacao_3 = Column(Boolean, default=False)
+    notificacao_venc = Column(Boolean, default=False)
     sit_pagamento = Column(Boolean, default=False)
 
 class Config(Base):
