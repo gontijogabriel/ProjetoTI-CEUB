@@ -22,7 +22,7 @@ class Boletos(Base):
     vencimento = Column(Date, nullable=False)
 
     alerta = Column(String(255), nullable=False)
-    alerta_hora = Column(Time, nullable=False)
+    alerta_hora = Column(String(155), nullable=False)
 
     notif_3_dias = Column(Boolean, default=False)
     notif_1_dia = Column(Boolean, default=False)

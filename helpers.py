@@ -23,12 +23,12 @@ def emoji_alerta(venc):
         return [dias,'🟢']
 
 def notificacao_email(boleto, email_to, msg):
-    corpo_email = """
+    corpo_email = f"""
     <h1>Alerta de Boletos</h1>
-    <p>Referente ao boleto: <strong>{{ boleto.nome }}</stong></p>
-    <p><strong>{{ msg }}</strong></p>
-    <p>Vencimento: {{ boleto.vencimento }}</p>
-    <p>Valor: {{ boleto.valor }}</p>
+    <p>Referente ao boleto: <strong>{boleto.nome}</stong></p>
+    <p><strong>{msg}</strong></p>
+    <p>Vencimento: {boleto.vencimento}</p>
+    <p>Valor: {boleto.valor}</p>
     <p>ass: Alerta de Boletos</p>
     """
 

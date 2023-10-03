@@ -51,13 +51,13 @@ def cadastrar_boleto():
         
 
         vencimento = datetime.strptime(venc, '%Y-%m-%d').date()
-        alerta_hora = datetime.strptime(alerta_h, "%H:%M").time()
+        #alerta_hora = datetime.strptime(alerta_h, "%H:%M").time()
 
         alerta = emoji_alerta(vencimento)[1]
         vence_em = emoji_alerta(vencimento)[0]
 
         conn = get_db_connection()
-        novo_boleto = Boletos(nome=nome, valor=valor, vencimento=vencimento, alerta=alerta, alerta_hora=alerta_hora, vence_em=vence_em)
+        novo_boleto = Boletos(nome=nome, valor=valor, vencimento=vencimento, alerta=alerta, alerta_hora=alerta_h, vence_em=vence_em)
         conn.add(novo_boleto)
         conn.commit()
         conn.close()
@@ -193,84 +193,70 @@ def configuracoes():
     return render_template('configuracoes.html', email=new_email)
 
 ####
-# Funcao para mandar notificacoes
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import SQLAlchemyError
+
+engine = create_engine('sqlite:///agenda_de_boletos.db')
+Session = sessionmaker(bind=engine)
+
 def verifica_banco():
     print('lendo banco ... ')
     try:
-        # Pega todos os boletos pendentes do banco
-        conn = get_db_connection()
-        email_to = conn.query(Config).first().email
-        data = conn.query(Boletos).filter_by(sit_pagamento=False).all()
-        conn.close()
+        with Session() as session:
+            email_to = session.query(Config).first().email
+            boletos_pendentes = session.query(Boletos).filter_by(sit_pagamento=False).all()
 
-        for boleto in data:
-            ntf_3 = boleto.notif_3_dias
-            ntf_1 = boleto.notif_1_dia
-            ntf_v = boleto.notif_venc
+            for boleto in boletos_pendentes:
+                ntf_3 = boleto.notif_3_dias
+                ntf_1 = boleto.notif_1_dia
+                ntf_v = boleto.notif_venc
 
-            # Atualiza dias para o boleto vencer
-            dias = emoji_alerta(boleto.vencimento)[0]
-            conn = get_db_connection()
-            b = conn.query(Boletos).filter_by(id=boleto.id).first()
-            b.vence_em = emoji_alerta(boleto.vencimento)[0]
-            conn.commit()
-            conn.close()
+                dias = emoji_alerta(boleto.vencimento)[0]
 
-            if dias <= 0 and ntf_v == False:
-                # email vencido
+                # Atualize os boletos dentro do escopo da sessão
+                boleto.vence_em = dias
+                session.commit()
 
-                # atualiza
-                conn = get_db_connection()
-                b = conn.query(Boletos).filter_by(id=boleto.id).first()
-                b.notif_venc = True
-                conn.commit()
-                conn.close()
+                if dias <= 0 and ntf_v == False:
+                    # Atualize o boleto dentro do escopo da sessão
+                    boleto.notif_venc = True
+                    session.commit()
 
-                # manda email
-                now = datetime.now().time()
-                alert_time = datetime.strptime(b.alerta_hora, "%H:%M").time()
-                if now.hour == alert_time.hour:
-                    notificacao_email(boleto, email_to, 'BOLETO VENCIDO')
+                    now = datetime.now().time()
+                    alert_time = (boleto.alerta_hora)[:2]
 
-            elif dias == 1 and ntf_1 == False:
-                # manda o email faltando 1 dia para vencer
+                    if str(now.hour) == alert_time[:2]:
+                        notificacao_email(boleto, email_to, 'BOLETO VENCIDO')
 
-                # atualiza
-                conn = get_db_connection()
-                b = conn.query(Boletos).filter_by(id=boleto.id).first()
-                b.notif_1_dia = True
-                conn.commit()
-                conn.close()
+                elif dias == 1 and not ntf_1:
+                    # Atualize o boleto dentro do escopo da sessão
+                    boleto.notif_1_dia = True
+                    session.commit()
 
-                # manda email
-                now = datetime.now().time()
-                alert_time = datetime.strptime(b.alerta_hora, "%H:%M").time()
-                if now.hour == alert_time.hour:
-                    notificacao_email(boleto, email_to, 'boleto vence amanha')
+                    now = datetime.now().time()
+                    alert_time = (boleto.alerta_hora)[:2]
 
-            elif dias >= 1 and dias <= 3 and ntf_3 == False:
-                # manda o boleto faltando 3 dias para vencer
-                
-                # atualiza
-                conn = get_db_connection()
-                b = conn.query(Boletos).filter_by(id=boleto.id).first()
-                b.notif_3_dias = True
-                conn.commit()
-                conn.close()
+                    if str(now.hour) == alert_time[:2]:
+                        notificacao_email(boleto, email_to, 'O boleto vence amanha')
 
-                # manda email
-                now = datetime.now().time()
-                alert_time = datetime.strptime(b.alerta_hora, "%H:%M").time()
-                
-                if now.hour == alert_time.hour:
-                    notificacao_email(boleto, email_to, 'BOLETO VENCIDO')
+                elif 1 < dias <= 3 and not ntf_3:
+                    # Atualize o boleto dentro do escopo da sessão
+                    boleto.notif_3_dias = True
+                    session.commit()
 
-            else:
-                pass
-    
+                    now = datetime.now().time()
+                    alert_time = (boleto.alerta_hora)[:2]
+                    if str(now.hour) == alert_time[:2]:
+                        notificacao_email(boleto, email_to, 'O boleto vence em 3 dias!')
+
+    except SQLAlchemyError as erro:
+        print(f"Ocorreu um erro no SQLAlchemy: {erro}")
     except Exception as erro:
-        # Ação a ser realizada em caso de erro
         print(f"Ocorreu um erro: {erro}")
+
+
+# Funcao para mandar notificacoes
 
 
 
@@ -279,7 +265,7 @@ if __name__ == '__main__':
 
     try:   
         scheduler = BackgroundScheduler()
-        scheduler.add_job(verifica_banco, 'interval', seconds=20)
+        scheduler.add_job(verifica_banco, 'interval', seconds=10)
         scheduler.start()
     except:
         pass
