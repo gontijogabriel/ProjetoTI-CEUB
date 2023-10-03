@@ -19,6 +19,7 @@ promovendo uma melhor saúde financeira.
 
 ## Como Executar
 ### Passo 1
+- necessário ter o arquivo .env
 - clonar o repositorio `git clone <link-repositorio>`
 - criar .venv `python -m venv .venv`
 - ativar .venv `.venv\Scripts\activate`
@@ -26,4 +27,17 @@ promovendo uma melhor saúde financeira.
 - executar aplicação `python app.py`
 
 ### Passo 2
-- executar `python app.py` na no terminal da .venv e abrir o link do servidor
+- executar `python run.py` na no terminal da .venv e abrir o link do servidor
+
+
+# A fazer:
+- erros
+    - criar funcionaliade para mostrar erros
+
+- ajustar endpoint 'editar'
+	- modificar os dados de notificacao
+	- obs: seria mais facil pegar os dados editados e adicionar como novo
+
+- ajustar css
+	- hover dos botoes / integracao com background
+
