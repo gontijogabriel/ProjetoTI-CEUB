@@ -12,14 +12,14 @@ por meio da tecnologia e da inovação. Sua implementação pode
 ter um impacto positivo na vida das pessoas, ajudando a evitar dívidas acumuladas e
 promovendo uma melhor saúde financeira.
 
-### Principais Bibliotecas
+## Principais Bibliotecas
 - Python 3.10.11
 - Flask
 - SQLite
 - SQLAlchemy
 
 ## Como Executar
-### Passo 1
+# 1.
 - necessário ter o arquivo .env
 - clonar o repositorio `git clone <link-repositorio>`
 - criar .venv `python -m venv .venv` (windows)
@@ -27,10 +27,10 @@ promovendo uma melhor saúde financeira.
 - instalar bibliotecas `pip install -r requirements.txt`
 - executar aplicação `python app.py`
 
-### Passo 2
+# 2.
 - executar `python run.py` na no terminal da .venv e abrir o link do servidor
 
-### A fazer:
+# A fazer:
 - [x] fontend, html e css
 - [x] backend, rotas, crud 
 - [x] logica de notificacoes 
@@ -38,3 +38,7 @@ promovendo uma melhor saúde financeira.
 - [ ] backend, criar funcionaliade para mostrar erros
 - [ ] backend, ajustar endpoint 'editar'
 - [ ] css, ajustar hover dos botoes e background da aplicacao
+
+# Imagens
+![index](img/index.png)
+![novo_boleto](img/novo_boleto.png)
