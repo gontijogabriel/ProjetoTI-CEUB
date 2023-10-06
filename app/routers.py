@@ -1,9 +1,10 @@
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, flash
 from datetime import datetime
 from app.models import get_db_connection, Boletos, Config
-from app.helpers import emoji_alerta
+from app.helpers import emoji_alerta, verifica_email
 from sqlalchemy import func, asc
 from app import app
+
 
 @app.route('/')
 def index():
@@ -56,6 +57,7 @@ def cadastrar_boleto():
         conn.commit()
         conn.close()
 
+        flash('Boleto adicionado com sucesso!')
         return redirect('/')
 
     return render_template('adicionar_boleto.html')
@@ -69,6 +71,7 @@ def pagar_boleto(id):
     conn.commit()
     conn.close()
 
+    flash('Boleto pago!')
     return redirect('/')
 
 
@@ -104,6 +107,7 @@ def excluir_boleto(id):
     conn.commit()
     conn.close()
 
+    flash('Boleto excluido!')
     return redirect('/')
 
 
@@ -125,13 +129,18 @@ def editar_boleto(id):
         boleto.valor = valor
 
         vencimento = datetime.strptime(venc, '%Y-%m-%d').date()
-        alerta_hora = datetime.strptime(aler, "%H:%M").time()
+        alerta = emoji_alerta(vencimento)[1]
+        vence_em = emoji_alerta(vencimento)[0]
 
         boleto.vencimento = vencimento
-        boleto.alerta_hora = alerta_hora
+        boleto.alerta = alerta
+        boleto.alerta_hora = aler
+        boleto.vence_em = vence_em
+
         conn.commit()
         conn.close()
 
+        flash('Boleto editado!')
         return redirect('/')
 
     return render_template('editar.html', boleto=boleto)
@@ -166,17 +175,23 @@ def configuracoes():
         
     if request.method == 'POST':
         email = request.form['email']
-        print('email: ', email)
-        if not email:
-            print('O campo de e-mail não pode estar vazio!')
+        
+        if not email or email == ' ':
+            flash('O campo de e-mail não pode estar vazio!')
         else:
-            conn = get_db_connection()
-            new_email = conn.query(Config).first()
-            new_email.email = email
-            conn.commit()
-            conn.close()
-            print('Configuração de e-mail atualizada com sucesso')
+            if verifica_email(email):
+                conn = get_db_connection()
+                new_email = conn.query(Config).first()
+                new_email.email = email
+                conn.commit()
+                conn.close()
+                print('Configuração de e-mail atualizada com sucesso')
 
-            return redirect('/')
+                flash('E-mail atualizado!')
+                return redirect('/')
+
+            else:
+                flash('O endereço de e-mail deve ser valido!')
+    
 
     return render_template('configuracoes.html', email=new_email)

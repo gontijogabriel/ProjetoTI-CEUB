@@ -8,17 +8,17 @@
             <form action="/editar/{{ boleto.id }}" method="post">
                 <div class="form__item">
                     <label for="">Identificação:</label>
-                    <input type="text" name="nome" value="{{ boleto.nome }}"> 
+                    <input type="text" name="nome" value="{{ boleto.nome }}" required> 
                 </div>
     
                 <div class="form__item">
                     <label for="">Valor:</label>
-                    <input type="number" name="valor" value="{{ boleto.valor }}">
+                    <input type="number" name="valor" value="{{ boleto.valor }}" required>
                 </div>
     
                 <div class="form__item">
                     <label for="">Vencimento:</label>
-                    <input type="date" name="vencimento" value="{{ boleto.vencimento }}">
+                    <input type="date" name="vencimento" value="{{ boleto.vencimento }}" required>
                 </div>
     
                 <div class="form__item">

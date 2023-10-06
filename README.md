@@ -34,10 +34,9 @@ promovendo uma melhor saúde financeira.
 - [x] fontend, html e css
 - [x] backend, rotas, crud 
 - [x] logica de notificacoes 
-- [ ] backend, criar arquivo errors.py
-- [ ] backend, criar funcionaliade para mostrar erros
-- [ ] backend, ajustar endpoint 'editar'
-- [ ] css, ajustar hover dos botoes e background da aplicacao
+- [x] backend, adicionar erros
+- [x] backend, criar funcionaliade para mostrar erros
+- [x] backend, ajustar endpoint 'editar'
 
 # Imagens
 ![index](img/index.png)

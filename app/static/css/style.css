@@ -213,3 +213,8 @@ a.tabela__link {
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+.error_p {
+    text-align: center; 
+    padding: 20px;
+}

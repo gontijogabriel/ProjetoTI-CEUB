@@ -13,11 +13,22 @@
     
                 <div class="form__item">
                     <label for="email">Alterar Email:</label>
-                    <input class="text" name="email">
+                    <input class="text" name="email" required>
                     <input type="submit" value="Salvar" class="tabela__link g">
                 </div>
             
             </form>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                        {% for category, message in messages %}
+                            <p class="error_p {{ category }}">{{ message }}</p>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
             <div style="padding: 10px 0;">
                 <a href="{{ url_for('index')}}" class="tabela__link b">Voltar</a>
             </div>

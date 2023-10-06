@@ -5,6 +5,7 @@ from datetime import datetime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from dotenv import load_dotenv
+import re
 import os
 
 load_dotenv()
@@ -112,3 +113,14 @@ def verifica_banco():
         print(f"Ocorreu um erro no SQLAlchemy: {erro}")
     except Exception as erro:
         print(f"Ocorreu um erro: {erro}")
+
+
+def verifica_email(email):
+    # Padrão de expressão regular para validar endereços de e-mail
+    padrao = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+    
+    # Tenta fazer a correspondência do padrão no email fornecido
+    if re.match(padrao, email):
+        return True
+    else:
+        return False

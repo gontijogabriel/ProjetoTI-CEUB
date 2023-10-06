@@ -43,6 +43,14 @@
                 <h1>Não existem boletos cadastrados!</h1>
             </div>
             {% endif %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="error_p {{ category }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
         </div>
     </div>
 </body>
