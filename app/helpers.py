@@ -73,6 +73,7 @@ def verifica_banco():
 
                 # Atualize os boletos dentro do escopo da sessão
                 boleto.vence_em = dias
+                boleto.alerta = emoji_alerta(boleto.vencimento)[1]
                 session.commit()
 
                 if dias <= 0 and ntf_v == False:
